@@ -9,12 +9,12 @@ namespace Tema3
 	public class InputReader
 	{
 		public string FilePath { get; private init; }
-		public List<(int id, (double x, double y) Coordonates)> Nodes { get; private init; }
+		public Dictionary<int, (double x, double y)> Nodes { get; private init; }
 
 	public InputReader(string filePath)
 		{
 			FilePath = filePath;
-			Nodes = new List<(int id, (double x, double y) Coordonates)>();
+			Nodes = new();
 		}
 
 		public void ReadInput()
@@ -33,8 +33,7 @@ namespace Tema3
 					if (start)
 					{
 						var node = line.Split(' ');
-						//Console.WriteLine((int.Parse(node[0]), (double.Parse(node[1]), double.Parse(node[2]))));
-						Nodes.Add((int.Parse(node[0]), (double.Parse(node[1]), double.Parse(node[2]))));
+						Nodes.Add(int.Parse(node[0]), (double.Parse(node[1]), double.Parse(node[2])));
 					}
 					else
 					{
