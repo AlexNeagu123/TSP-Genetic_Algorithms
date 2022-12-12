@@ -13,6 +13,22 @@ namespace Tema3
 			{
 				Console.WriteLine(node);
 			}
+
+
+			var population = GeneticAlgorithm.GetRandomPopulation(10, inputReader.Nodes.Count);
+
+			foreach (var individ in population)
+			{
+				foreach (var gene in individ)
+				{
+					Console.Write(gene + " ");
+				}
+				Console.WriteLine("\n");
+
+				Console.WriteLine(EvalCycle.EvaluateCycle(inputReader.Nodes, individ));
+			}
+
+
 		}
 	}
 }
