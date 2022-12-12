@@ -13,6 +13,8 @@ namespace Tema3
 			{
 				Console.WriteLine(node);
 			}
+
+			
 		}
 	}
 }

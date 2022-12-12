@@ -8,10 +8,10 @@ namespace Tema3
 {
 	public class InputReader
 	{
-		public string FilePath { get; init; }
-		public List<(int id, (double x, double y) Coordonates)> Nodes;
+		public string FilePath { get; private init; }
+		public List<(int id, (double x, double y) Coordonates)> Nodes { get; private init; }
 
-		public InputReader(string filePath)
+	public InputReader(string filePath)
 		{
 			FilePath = filePath;
 			Nodes = new List<(int id, (double x, double y) Coordonates)>();
