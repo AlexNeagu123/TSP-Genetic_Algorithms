@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\crist\\OneDrive\\Desktop\\FII\\ANUL2\\Anul2, Sem1\\Alg genetici\\Teme\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\Tema3.csproj",
+      "projectUniqueName": "C:\\Users\\crist\\OneDrive\\Desktop\\FII\\ANUL2\\Anul2_Sem1\\AlgGenetici\\Teme\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\Tema3.csproj",
       "projectName": "Tema3",
-      "projectPath": "C:\\Users\\crist\\OneDrive\\Desktop\\FII\\ANUL2\\Anul2, Sem1\\Alg genetici\\Teme\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\Tema3.csproj",
+      "projectPath": "C:\\Users\\crist\\OneDrive\\Desktop\\FII\\ANUL2\\Anul2_Sem1\\AlgGenetici\\Teme\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\Tema3.csproj",
       "packagesPath": "C:\\Users\\crist\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\crist\\OneDrive\\Desktop\\FII\\ANUL2\\Anul2, Sem1\\Alg genetici\\Teme\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\obj\\",
+      "outputPath": "C:\\Users\\crist\\OneDrive\\Desktop\\FII\\ANUL2\\Anul2_Sem1\\AlgGenetici\\Teme\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
