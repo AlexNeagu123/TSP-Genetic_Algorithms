@@ -8,23 +8,23 @@
     "net7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\crist\\.nuget\\packages\\": {},
+    "C:\\Users\\roboc\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\crist\\OneDrive\\Desktop\\FII\\ANUL2\\Anul2_Sem1\\AlgGenetici\\Teme\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\Tema3.csproj",
+      "projectUniqueName": "E:\\Dev\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\Tema3.csproj",
       "projectName": "Tema3",
-      "projectPath": "C:\\Users\\crist\\OneDrive\\Desktop\\FII\\ANUL2\\Anul2_Sem1\\AlgGenetici\\Teme\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\Tema3.csproj",
-      "packagesPath": "C:\\Users\\crist\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\crist\\OneDrive\\Desktop\\FII\\ANUL2\\Anul2_Sem1\\AlgGenetici\\Teme\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\obj\\",
+      "projectPath": "E:\\Dev\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\Tema3.csproj",
+      "packagesPath": "C:\\Users\\roboc\\.nuget\\packages\\",
+      "outputPath": "E:\\Dev\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\crist\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\roboc\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -33,7 +33,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
