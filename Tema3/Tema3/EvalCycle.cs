@@ -8,6 +8,17 @@ namespace Tema3
 {
 	public static class EvalCycle
 	{
+		public static double[] EvaluatePopulation(Dictionary<int, (double x, double y)> Nodes, List<int[]> population)
+		{
+			var eval = new double[population.Count];
+
+			for (int i = 0; i < population.Count; i++)
+			{
+				eval[i] = EvaluateCycle(Nodes, population[i]);
+			}
+
+			return eval;
+		}
 		public static double EvaluateCycle(Dictionary<int, (double x, double y)> Nodes, int[] permutation)
 		{
 			double cost = 0;
