@@ -10,7 +10,7 @@ namespace Tema3
 			inputReader.ReadInput();
 
 
-			var best = GeneticAlgorithm.Run(inputReader.Nodes, 2000, 200, 0.1, 0.9);
+			var best = GeneticAlgorithm.RunAdaptive(inputReader.Nodes, 2000, 200, 1, 0.058, 0.1);
 
 			foreach (var item in best.individ)
 			{
