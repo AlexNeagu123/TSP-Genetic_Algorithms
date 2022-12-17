@@ -9,25 +9,15 @@ namespace Tema3
 			var inputReader = new InputReader("InputFiles\\st70.tsp");
 			inputReader.ReadInput();
 
-			foreach (var node in inputReader.Nodes)
+
+			var best = GeneticAlgorithm.Run(inputReader.Nodes, 2000, 200, 0.1, 0.9);
+
+			foreach (var item in best.individ)
 			{
-				Console.WriteLine(node);
+				Console.Write(item + " ");
 			}
-
-
-			var population = GeneticAlgorithm.GetRandomPopulation(10, inputReader.Nodes.Count);
-
-			foreach (var individ in population)
-			{
-				foreach (var gene in individ)
-				{
-					Console.Write(gene + " ");
-				}
-				Console.WriteLine("\n");
-
-				Console.WriteLine(EvalCycle.EvaluateCycle(inputReader.Nodes, individ));
-			}
-
+			Console.WriteLine();
+			Console.WriteLine(best.value);
 
 		}
 	}
