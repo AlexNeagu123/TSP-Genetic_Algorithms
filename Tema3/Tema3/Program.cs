@@ -6,20 +6,39 @@ namespace Tema3
 	{
 		static void Main(string[] args)
 		{
-			var inputReader = new InputReader("InputFiles\\eil51.tsp");
+			var inputReader = new InputReader("InputFiles\\st70.tsp");
 			inputReader.ReadInput();
 
-
 			//var best = GeneticAlgorithm.Run(inputReader.Nodes, 2000, 200, 0.01, 0.90);
-            var best = GeneticAlgorithm.RunAdaptive(inputReader.Nodes, 2000, 200, 0.90, 0.03, 0.1);
+			var best = GeneticAlgorithm.RunAdaptive(inputReader.Nodes, 2000, 200, 0.90, 0.3, 0.5);
 
             foreach (var item in best.individ)
 			{
 				Console.Write(item + " ");
 			}
+
 			Console.WriteLine();
 			Console.WriteLine(best.value);
 
-		}
+
+			//Check If The Permutation Obtained Is Valid
+
+			bool[] taken = new bool[best.individ.Length + 1];
+			
+			bool good = true;
+
+            foreach (var item in best.individ)
+            {
+				if (taken[item])
+					good = false;
+
+				taken[item] = true;
+            }
+
+			if(good)
+				Console.WriteLine("Permutation Is Valid");
+			else
+				Console.WriteLine("Permutation Is Invalid");
+        }
 	}
 }

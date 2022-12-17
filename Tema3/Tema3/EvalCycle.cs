@@ -8,7 +8,7 @@ namespace Tema3
 {
 	public static class EvalCycle
 	{
-		public static double[] EvaluatePopulation(Dictionary<int, (double x, double y)> Nodes, List<int[]> population)
+        public static double[] EvaluatePopulation(Dictionary<int, (double x, double y)> Nodes, List<int[]> population)
 		{
 			var eval = new double[population.Count];
 

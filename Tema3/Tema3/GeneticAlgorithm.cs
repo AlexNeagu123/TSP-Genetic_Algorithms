@@ -11,10 +11,8 @@ namespace Tema3
 {
 	public static class GeneticAlgorithm
 	{
-		static Random random = new();
-
-
-		public static (int[] individ, double value) Run(Dictionary<int, (double x, double y)> Nodes, int maxT, int populationSize, double mutationProbability, double crossoverProbability)
+        static Random random = new();
+        public static (int[] individ, double value) Run(Dictionary<int, (double x, double y)> Nodes, int maxT, int populationSize, double mutationProbability, double crossoverProbability)
 		{
 			int t = 0;
 
@@ -59,7 +57,7 @@ namespace Tema3
 		}
 
 
-			public static List<int[]> GetRandomPopulation(int popSize, int individSize)
+		public static List<int[]> GetRandomPopulation(int popSize, int individSize)
 		{
 			var population = new List<int[]>();
 
@@ -131,19 +129,44 @@ namespace Tema3
 			return IdentityPermutationDecode(permutation);
 		}
 
+		public static int[] IVMutateIndividual(int[] individual, double mutateProbability)
+		{
+			if (random.NextDouble() > mutateProbability)
+				return individual;
+
+            int len = individual.Length;
+            int[] permutation = new int[len];
+
+			int invLen = random.Next(2, len + 1);
+			int pos = random.Next(0, len - invLen + 1);
+
+			for (int i = 0; i < len; i++)
+			{
+				if (i < pos || i > pos + invLen - 1)
+					permutation[i] = individual[i];
+				else
+					permutation[i] = individual[pos + invLen - 1 - (i - pos)];
+			}
+            return permutation;
+            
+		}
+
 		public static void MutatePopulation(List<int[]> population, List<double> mutateProbability)
 		{
-			for (var i = 0; i < population.Count; i++)
-				population[i] = MutateIndividual(population[i], mutateProbability[i]);
+            // Apelez Inversion Mutation. Pentru mutatia initiala stergi prefixul IV
+            for (var i = 0; i < population.Count; i++)
+				population[i] = IVMutateIndividual(population[i], mutateProbability[i]);
 		}
 
 		public static void MutatePopulation(List<int[]> population, double mutateProbability)
 		{
-			for (int i = 0; i < population.Count; i++)
-				population[i] = MutateIndividual(population[i], mutateProbability);
+            // Apelez Inversion Mutation. Pentru mutatia initiala stergi prefixul IV
+            for (int i = 0; i < population.Count; i++)
+				population[i] = IVMutateIndividual(population[i], mutateProbability);
 		}
 
-		private static (int[], int[]) CrossoverParents((int[] p1, int[] p2) parents)
+        //Metoda Initiala De Crossover Decenta Pentru Orice Cazuri
+        private static (int[], int[]) CrossoverParents((int[] p1, int[] p2) parents)
 		{
 			(int[] d1, int[] d2) descendants = (new int[parents.p1.Length], new int[parents.p2.Length]);
 			parents.p1.CopyTo(descendants.d1, 0);
@@ -159,7 +182,55 @@ namespace Tema3
 
 			return descendants;
 		}
-		private static int[] ERXCrossoverParents((int[] p1, int[] p2) parents)
+
+		//Metoda PMX De Crossover, buna pentru cazuri mari
+		private static int[] PMXCrossoverParents((int[] p1, int[] p2) parents)
+		{
+			int len = parents.p1.Length;
+			
+            int[] descendant = new int[len];
+			Array.Fill(descendant, 0);
+
+            bool[] taken = new bool[len + 1];
+            Array.Fill(taken, false);
+
+            int[] map2 = new int[len + 1];
+            
+            for (int i = 0; i < len; i++)
+				map2[parents.p2[i]] = i;
+
+			int cut1 = random.Next(0, len - 1);
+			int cut2 = random.Next(cut1 + 1, len);
+		
+			for (int i = cut1; i <= cut2; i++)
+			{
+				descendant[i] = parents.p1[i];
+				taken[descendant[i]] = true;
+			}
+
+			for(int i = cut1; i <= cut2; ++i)
+			{
+				if (taken[parents.p2[i]])
+					continue;
+
+				int ind = map2[descendant[i]];
+				while(ind >= cut1 && ind <= cut2)
+					ind = map2[descendant[ind]];
+
+				descendant[ind] = parents.p2[i];
+			}
+
+			for(int i = 0; i < len; ++i)
+			{
+				if (descendant[i] == 0)
+					descendant[i] = parents.p2[i];
+			}
+
+            return descendant;
+        }
+
+        //Metoda ERX De Crossover, foarte buna pentru cazuri mici, imposibil de folosit pentru cazuri mari
+        private static int[] ERXCrossoverParents((int[] p1, int[] p2) parents)
 		{
 			int len = parents.p1.Length;
 			var indices = new (int pos1, int pos2)[len + 1];
@@ -182,9 +253,9 @@ namespace Tema3
 				HashSet<int> neighbours = new HashSet<int>();
 
 				neighbours.Add(pos1 == 0 ? parents.p1[len - 1] : parents.p1[pos1 - 1]);
-                neighbours.Add(pos2 == 0 ? parents.p2[len - 1] : parents.p2[pos2 - 1]);
-                neighbours.Add(pos1 == len - 1 ? parents.p1[0] : parents.p1[pos1 + 1]);
-                neighbours.Add(pos2 == len - 1 ? parents.p2[0] : parents.p2[pos2 + 1]);
+				neighbours.Add(pos2 == 0 ? parents.p2[len - 1] : parents.p2[pos2 - 1]);
+				neighbours.Add(pos1 == len - 1 ? parents.p1[0] : parents.p1[pos1 + 1]);
+				neighbours.Add(pos2 == len - 1 ? parents.p2[0] : parents.p2[pos2 + 1]);
 
 				foreach(var neighbour in neighbours)
 					connectedCities[i].Add(neighbour);
@@ -192,17 +263,17 @@ namespace Tema3
 			}
 
 			(int size, int city) initCity = (2000000, -1);
-            bool[] visited = new bool[len + 1];
+			bool[] visited = new bool[len + 1];
 
-            for (int i = 1; i <= len; ++i)
+			for (int i = 1; i <= len; ++i)
 			{
 				visited[i] = false;
 				if (connectedCities[i].Count < initCity.size)
 					initCity = (connectedCities[i].Count, i);
 			}
 
-            int curCity = initCity.city;
-            visited[curCity] = true;
+			int curCity = initCity.city;
+			visited[curCity] = true;
 
 			List<int> offset = new List<int>() { curCity };
 		
@@ -257,6 +328,7 @@ namespace Tema3
 
 			return offset.ToArray();
 		}
+
 		public static void CrossoverPopulation(List<int[]> population, double crossoverProb)
 		{
 			var list = new List<(int[] chromosome, double prob)>(population.Count);
@@ -277,19 +349,23 @@ namespace Tema3
 						break;
 
 
+				//Metoda PMX de crossover
+
+				//var descendant = PMXCrossoverParents((list[i].chromosome, list[i + 1].chromosome));
+				//population.Add(descendant);
+
+				//Metoda ERX de crossover 
+
 				var descendant = ERXCrossoverParents((list[i].chromosome, list[i + 1].chromosome));
 				population.Add(descendant);
 
-				/* Metoda initiala de crossover 
+				//Metoda initiala de crossover, ar trebui de mutat chestiile cu identityPermutation in functie 
 	
-				var ch1 = IdentityPermutation(list[i].chromosome);
-				var ch2 = IdentityPermutation(list[i + 1].chromosome);
-				var descendants = CrossoverParents((ch1, ch2));
-				population.Add(IdentityPermutationDecode(descendants.Item1));
-				population.Add(IdentityPermutationDecode(descendants.Item2));
-
-				*/
-
+				//var ch1 = IdentityPermutation(list[i].chromosome);
+				//var ch2 = IdentityPermutation(list[i + 1].chromosome);
+				//var descendants = CrossoverParents((ch1, ch2));
+				//population.Add(IdentityPermutationDecode(descendants.Item1));
+				//population.Add(IdentityPermutationDecode(descendants.Item2));
 			}
 		}
 
