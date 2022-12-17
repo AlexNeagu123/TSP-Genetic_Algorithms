@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -17,9 +18,7 @@ namespace Tema3
 		{
 			int t = 0;
 
-			List<double> mutationProb;
 			var population = GetRandomPopulation(populationSize, Nodes.Count);
-
 			var eval = EvalCycle.EvaluatePopulation(Nodes, population);
 
 			while (t < maxT)
@@ -160,7 +159,104 @@ namespace Tema3
 
 			return descendants;
 		}
+		private static int[] ERXCrossoverParents((int[] p1, int[] p2) parents)
+		{
+			int len = parents.p1.Length;
+			var indices = new (int pos1, int pos2)[len + 1];
 
+			for (int i = 0; i < len; i++)
+			{
+				(int gene1, int gene2) = (parents.p1[i], parents.p2[i]);
+				indices[gene1].pos1 = i;
+				indices[gene2].pos2 = i;
+			}
+
+			var connectedCities = new List<List<int>>();
+
+			for (int i = 1; i <= len + 1; ++i)
+				connectedCities.Add(new List<int>());
+			
+			for (int i = 1; i <= len; i++)
+			{
+				(int pos1, int pos2) = (indices[i].pos1, indices[i].pos2);
+				HashSet<int> neighbours = new HashSet<int>();
+
+				neighbours.Add(pos1 == 0 ? parents.p1[len - 1] : parents.p1[pos1 - 1]);
+                neighbours.Add(pos2 == 0 ? parents.p2[len - 1] : parents.p2[pos2 - 1]);
+                neighbours.Add(pos1 == len - 1 ? parents.p1[0] : parents.p1[pos1 + 1]);
+                neighbours.Add(pos2 == len - 1 ? parents.p2[0] : parents.p2[pos2 + 1]);
+
+				foreach(var neighbour in neighbours)
+					connectedCities[i].Add(neighbour);
+
+			}
+
+			(int size, int city) initCity = (2000000, -1);
+            bool[] visited = new bool[len + 1];
+
+            for (int i = 1; i <= len; ++i)
+			{
+				visited[i] = false;
+				if (connectedCities[i].Count < initCity.size)
+					initCity = (connectedCities[i].Count, i);
+			}
+
+            int curCity = initCity.city;
+            visited[curCity] = true;
+
+			List<int> offset = new List<int>() { curCity };
+		
+			while(offset.Count < len)
+			{
+				(int size, int city) nxtCity = (2000000, -1);
+
+				foreach (var neig in connectedCities[curCity])
+				{
+					if (visited[neig])
+						continue;
+
+					int edges = 0;
+
+					foreach(var neigEdges in connectedCities[neig])
+					{
+						if (!visited[neigEdges])
+							edges++;
+					}
+					
+					if(edges < nxtCity.size)
+						nxtCity = (edges, neig);
+				}
+                
+				if (nxtCity.city == -1)
+				{
+					for(int candidate = 1; candidate <= len; candidate++)
+					{
+						if (visited[candidate])
+							continue;
+
+						int edges = 0;
+						foreach(var neigEdge in connectedCities[candidate])
+						{
+							if (!visited[neigEdge])
+								edges++;
+						}
+
+						if (edges < nxtCity.size)
+							nxtCity = (edges, candidate);
+					}
+				}
+
+				if(nxtCity.city == -1)
+					break;
+
+				curCity = nxtCity.city;
+				offset.Add(curCity);
+				visited[curCity] = true;
+								
+			}
+
+			return offset.ToArray();
+		}
 		public static void CrossoverPopulation(List<int[]> population, double crossoverProb)
 		{
 			var list = new List<(int[] chromosome, double prob)>(population.Count);
@@ -180,12 +276,20 @@ namespace Tema3
 					if (random.NextDouble() >= 0.5)
 						break;
 
+
+				var descendant = ERXCrossoverParents((list[i].chromosome, list[i + 1].chromosome));
+				population.Add(descendant);
+
+				/* Metoda initiala de crossover 
+	
 				var ch1 = IdentityPermutation(list[i].chromosome);
 				var ch2 = IdentityPermutation(list[i + 1].chromosome);
-
 				var descendants = CrossoverParents((ch1, ch2));
 				population.Add(IdentityPermutationDecode(descendants.Item1));
 				population.Add(IdentityPermutationDecode(descendants.Item2));
+
+				*/
+
 			}
 		}
 
@@ -260,7 +364,36 @@ namespace Tema3
 			return (newPopulation, mutationProb);
 		}
 
+		public static List<int[]> TournSelect(List<int[]> population, int populationSize, double[] eval)
+		{
+  
+            List<int[]> newPopulation = new List<int[]>(populationSize);
+            bool[] taken = new bool[population.Count];
 
+            for (int i = 0; i < populationSize; i++)
+			{
+				for (int j = 0; j < population.Count; j++)
+					taken[j] = false;
+
+				var candidates = new List<(double cost, int ind)>(8);
+
+				for (int step = 0; step < 8; step++)
+				{
+					int rand = random.Next(0, populationSize);
+					
+					while (taken[rand])
+						rand = random.Next(0, populationSize);
+
+					candidates.Add((eval[rand], rand));
+					taken[rand] = true;
+				}
+
+				candidates.Sort((cand1, cand2) => cand1.cost.CompareTo(cand2.cost));
+				newPopulation.Add(population[candidates[0].ind]);
+			}
+
+			return newPopulation;
+        }
 		public static List<int[]> Select(List<int[]> population, int populationSize, double[] eval)
 		{
 			double[] evalNorm = new double[population.Count];

@@ -1,14 +1,15 @@
 {
   "version": 2,
-<<<<<<< HEAD
   "dgSpecHash": "V2FZHteASqpKQpejmNf6lZ86hgnVYbRHrZ4gu/TrUPut0YvwZZ60iyBeUbnt66Vz9Aetz/1kRVoqWwTUWd+QjA==",
-||||||| 24b6b9d
-  "dgSpecHash": "Uk9BvNt7gDXcx3yweq7IqWa3Ss3TuqrEdt6dn7aduvz/8dfU60OFZ02eOttJbUye3k1gLSwR2pp9pxxA3Fq9CQ==",
-=======
-  "dgSpecHash": "+1WFdAHQUkqHiq14zkiPP9Tj9hpJjkf1fAl8rFsiAqjzwslk6kzsnkySBESh/N+PajJtUP8CTxswcpsxb/D2eg==",
->>>>>>> 3310dbb0fc7f98340b788ad8d1138f11ae2344fe
   "success": true,
   "projectFilePath": "E:\\Dev\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\Tema3.csproj",
   "expectedPackageFiles": [],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file E:\\Dev\\Tema3-AlgoritmiGenetici\\Tema3\\Tema3\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

@@ -6,13 +6,14 @@ namespace Tema3
 	{
 		static void Main(string[] args)
 		{
-			var inputReader = new InputReader("InputFiles\\st70.tsp");
+			var inputReader = new InputReader("InputFiles\\eil51.tsp");
 			inputReader.ReadInput();
 
 
-			var best = GeneticAlgorithm.RunAdaptive(inputReader.Nodes, 2000, 200, 1, 0.058, 0.1);
+			//var best = GeneticAlgorithm.Run(inputReader.Nodes, 2000, 200, 0.01, 0.90);
+            var best = GeneticAlgorithm.RunAdaptive(inputReader.Nodes, 2000, 200, 0.90, 0.03, 0.1);
 
-			foreach (var item in best.individ)
+            foreach (var item in best.individ)
 			{
 				Console.Write(item + " ");
 			}
