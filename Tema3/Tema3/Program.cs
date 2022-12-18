@@ -10,9 +10,12 @@ namespace Tema3
 			inputReader.ReadInput();
 
 			//var best = GeneticAlgorithm.Run(inputReader.Nodes, 2000, 200, 0.01, 0.90);
-			var best = GeneticAlgorithm.RunAdaptive(inputReader.Nodes, 2000, 200, 0.90, 0.3, 0.5);
+			BaseSelection selection = new RouletteSelection();
+			BaseCrossover crossover = new PMXCrossover();
+			BaseMutation mutation = new IVMutation();
+			var best = GeneticAlgorithm.Run(inputReader.Nodes, 2000, 200, 0.01, 0.90, selection, mutation, crossover);
 
-            foreach (var item in best.individ)
+			foreach (var item in best.individ)
 			{
 				Console.Write(item + " ");
 			}
