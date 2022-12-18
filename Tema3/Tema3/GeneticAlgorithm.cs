@@ -62,7 +62,7 @@ namespace Tema3
 
 	public static class GeneticAlgorithmAdaptive
 	{
-		public static (int[] individ, double value) RunAdaptive(Dictionary<int, (double x, double y)> Nodes, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseCrossover crossover)
+		public static (int[] individ, double value) RunAdaptive(Dictionary<int, (double x, double y)> Nodes, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
 		{
 			int t = 0;
 
@@ -74,7 +74,7 @@ namespace Tema3
 			while (t < maxT)
 			{
 				(population, mutationProb) = Select(population, populationSize, eval, k1, k2);
-				MutatePopulation(population, mutationProb);
+				MutatePopulation(population, mutationProb, mutation);
 				crossover.CrossoverPopulation(population, crossoverProbability);
 				eval = EvalCycle.EvaluatePopulation(Nodes, population);
 				++t;
@@ -85,9 +85,8 @@ namespace Tema3
 			return (population[eval.ToList().IndexOf(min)], min);
 		}
 
-		public static void MutatePopulation(List<int[]> population, List<double> mutateProbability)
+		public static void MutatePopulation(List<int[]> population, List<double> mutateProbability, BaseMutation mutation)
 		{
-			var mutation = new NormalMutation();
 			// Apelez Inversion Mutation. Pentru mutatia initiala stergi prefixul IV
 			for (var i = 0; i < population.Count; i++)
 				population[i] = mutation.MutateIndividual(population[i], mutateProbability[i]);

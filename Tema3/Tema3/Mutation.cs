@@ -33,6 +33,11 @@ namespace Tema3
 
 			return Decode(permutation);
 		}
+
+		public override string ToString()
+		{
+			return "Normal Mutation";
+		}
 	}
 
 	public class IVMutation : BaseMutation
@@ -56,6 +61,11 @@ namespace Tema3
 					permutation[i] = individual[pos + invLen - 1 - (i - pos)];
 			}
 			return permutation;
+		}
+
+		public override string ToString()
+		{
+			return "IV Mutation";
 		}
 	}
 }

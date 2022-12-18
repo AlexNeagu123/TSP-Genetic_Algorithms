@@ -1,59 +1,137 @@
 ﻿using Tema3;
+using Microsoft.Data.Sqlite;
+using System.Data;
+using System.Data.SQLite;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Tema3
 {
 	class Program
 	{
+		static double meanValue = 0;
+		static List<double> values = new List<double>();
+		static object sumlock = new object();
+
+		static double meanTimestamp = 0;
+		static List<long> Timestamps = new List<long>();
+		
+		static SQLiteConnection connection = new SQLiteConnection("Data Source=C:\\Genetici\\Tema3.db");
+
+
+		
 		static void Main(string[] args)
 		{
-			var inputReader = new InputReader("InputFiles\\st70.tsp");
+			//BaseSelection selection = new RouletteSelection();
+			BaseCrossover crossover = new PMXCrossover();
+			BaseMutation mutation = new IVMutation();
+
+			RunGeneticAlgorithm(20, "st70.tsp", 2000, 200, 0.9, 0.001, 0.1, mutation, crossover);
+		}
+
+
+
+
+		
+		public static void RunGeneticAlgorithm(int iterations, string file_name, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
+		{
+			var inputReader = new InputReader("InputFiles\\" + file_name);
 			inputReader.ReadInput();
 
-			////var best = GeneticAlgorithm.Run(inputReader.Nodes, 2000, 200, 0.01, 0.90);
-			//BaseSelection selection = new RouletteSelection();
-			//BaseCrossover crossover = new PMXCrossover();
-			//BaseMutation mutation = new IVMutation();
-			//var best = GeneticAlgorithm.Run(inputReader.Nodes, 2000, 200, 0.01, 0.90, selection, mutation, crossover);
+			List<Task> tasks = new List<Task>();
+			int i;
 
-			//foreach (var item in best.individ)
-			//{
-			//	Console.Write(item + " ");
-			//}
+			meanValue = 0;
+			values = new List<double>();
 
-			//Console.WriteLine();
-			//Console.WriteLine(best.value);
+			meanTimestamp = 0;
+			Timestamps = new List<long>();
 
-
-			////Check If The Permutation Obtained Is Valid
-
-			//bool[] taken = new bool[best.individ.Length + 1];
-
-			//bool good = true;
-
-			//         foreach (var item in best.individ)
-			//         {
-			//	if (taken[item])
-			//		good = false;
-
-			//	taken[item] = true;
-			//         }
-
-			//if(good)
-			//	Console.WriteLine("Permutation Is Valid");
-			//else
-			//	Console.WriteLine("Permutation Is Invalid");
-
-
-			var best = HillClimbing.Run(inputReader.Nodes, 200, 2000);
-
-			foreach (var item in best.individ)
+			for (i = 0; i < iterations; ++i)
 			{
-				Console.Write(item + " ");
+				tasks.Add(Task.Factory.StartNew(() => calc(inputReader.Nodes, maxT, populationSize, crossoverProbability, k1, k2, mutation, crossover)));
+				if ((i + 1) % 5 == 0)
+				{
+					Task.WaitAll(tasks.ToArray());
+					tasks.Clear();
+				}
 			}
 
-			Console.WriteLine();
+			Task.WaitAll(tasks.ToArray());
+			
+			meanValue /= i;
+			double SDValues = 0;
+			for (int j = 0; j < i; ++j)
+			{
+				SDValues += Math.Pow(values[j] - meanValue, 2);
+			}
 
-			Console.WriteLine(best.value);
+			SDValues = Math.Sqrt(SDValues / i);
+
+
+			meanTimestamp /= i;
+
+			Record best = new Record() {
+				FileName = file_name,
+				AvgValue = meanValue,
+				SdValue = SDValues,
+				BestValue = values.Min(),
+				AvgTime = meanTimestamp,
+				K1Prob = k1,
+				CrossProb = crossoverProbability,
+				MutType = mutation.GetType().Name,
+				CrossType = crossover.GetType().Name
+			};
+
+			WriteToDB(best, "Records");
+		}
+		
+
+		static void calc(Dictionary<int ,(double x, double y)> Nodes,int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
+		{
+			var TimestampStart = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+			(_, double dd) = GeneticAlgorithmAdaptive.RunAdaptive(Nodes, maxT, populationSize, crossoverProbability, k1, k2, mutation, crossover);
+
+			//double dd = GeneticAlgorithm.GetMin(s_function, dimensions, digitsOfprecision, 2000, 200, mutateProbability, crossoverProbability);
+
+			Console.WriteLine("Value: " + dd);
+
+			var TimestampFinish = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+			lock (sumlock)
+			{
+				Timestamps.Add(TimestampFinish - TimestampStart);
+				meanTimestamp += TimestampFinish - TimestampStart;
+
+				meanValue += dd;
+				values.Add(dd);
+			}
+		}
+
+
+		private static void WriteToDB(Record record, string table)
+		{
+			string insertSql = $"INSERT INTO {table} (file_name, avg_value, sd_value, best_value, avg_time, k1_prob, cross_prob, mutation_type, crossover_type) VALUES (@fileName, @avgValue, @sdValue, @bestValue, @avgTime, @k1Prob, @crossProb, @mutationType, @crossoverType)";
+
+			using (connection)
+			{
+				using (SQLiteCommand command = new SQLiteCommand(insertSql, connection))
+				{
+					command.Parameters.AddWithValue("@fileName", record.FileName);
+					command.Parameters.AddWithValue("@avgValue", record.AvgValue);
+					command.Parameters.AddWithValue("@sdValue", record.SdValue);
+					command.Parameters.AddWithValue("@bestValue", record.BestValue);
+					command.Parameters.AddWithValue("@avgTime", record.AvgTime);
+					command.Parameters.AddWithValue("@k1Prob", record.K1Prob);
+					command.Parameters.AddWithValue("@crossProb", record.CrossProb);
+					command.Parameters.AddWithValue("@mutationType", record.MutType);
+					command.Parameters.AddWithValue("@crossoverType", record.CrossType);
+
+					connection.Open();
+					command.ExecuteNonQuery();
+					connection.Close();
+				}
+			}
 		}
 	}
 }

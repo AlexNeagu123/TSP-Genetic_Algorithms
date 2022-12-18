@@ -58,6 +58,11 @@ namespace Tema3
 				population.Add(Decode(descendants.Item2));
 			}
 		}
+
+		public override string ToString()
+		{
+			return "Normal Crossover";
+		}
 	}
 
 	public class PMXCrossover : BaseCrossover
@@ -131,6 +136,11 @@ namespace Tema3
 				population.Add(descendant);
 
 			}
+		}
+
+		public override string ToString()
+		{
+			return "PMX Crossover";
 		}
 	}
 
@@ -260,6 +270,11 @@ namespace Tema3
 				population.Add(descendant);
 
 			}
+		}
+
+		public override string ToString()
+		{
+			return "ERX Crossover";
 		}
 	}
 }
