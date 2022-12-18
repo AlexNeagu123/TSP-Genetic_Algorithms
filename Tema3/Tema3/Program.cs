@@ -24,7 +24,7 @@ namespace Tema3
 			//BaseSelection selection = new RouletteSelection();
 			BaseCrossover crossover = new ERXCrossover();
 			BaseMutation mutation = new IVMutation();
-            RunGeneticAlgorithm(20, "st70.tsp", 2000, 200, 1, 0.1, 0.5, mutation, crossover);
+            RunGeneticAlgorithm(20, "usa13509.tsp", 2000, 200, 1, 0.1, 0.5, mutation, crossover);
         }
 
 		
