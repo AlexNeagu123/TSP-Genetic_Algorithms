@@ -32,7 +32,7 @@ namespace Tema3
 
 					if (start)
 					{
-						var node = line.Trim().Split(' ');
+						var node = line.Trim().Split(' ');						
 						Nodes.Add(int.Parse(node[0]), (double.Parse(node[1]), double.Parse(node[2])));
 					}
 					else
