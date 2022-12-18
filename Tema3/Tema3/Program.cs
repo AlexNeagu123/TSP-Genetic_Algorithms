@@ -22,10 +22,10 @@ namespace Tema3
 		static void Main(string[] args)
 		{
 			//BaseSelection selection = new RouletteSelection();
-			BaseCrossover crossover = new NormalCrossover();
+			BaseCrossover crossover = new ERXCrossover();
 			BaseMutation mutation = new IVMutation();
-			RunGeneticAlgorithm(10, "usa13509.tsp", 1500, 50, 1, 0.2, 0.4, mutation, crossover);
-		}
+            RunGeneticAlgorithm(20, "st70.tsp", 2000, 200, 1, 0.1, 0.5, mutation, crossover);
+        }
 
 		
 		public static void RunGeneticAlgorithm(int iterations, string file_name, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
