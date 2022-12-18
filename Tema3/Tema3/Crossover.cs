@@ -156,12 +156,13 @@ namespace Tema3
 			for (int i = 1; i <= len; i++)
 			{
 				(int pos1, int pos2) = (indices[i].pos1, indices[i].pos2);
-				HashSet<int> neighbours = new HashSet<int>();
-
-				neighbours.Add(pos1 == 0 ? parents.p1[len - 1] : parents.p1[pos1 - 1]);
-				neighbours.Add(pos2 == 0 ? parents.p2[len - 1] : parents.p2[pos2 - 1]);
-				neighbours.Add(pos1 == len - 1 ? parents.p1[0] : parents.p1[pos1 + 1]);
-				neighbours.Add(pos2 == len - 1 ? parents.p2[0] : parents.p2[pos2 + 1]);
+				HashSet<int> neighbours = new()
+				{
+					pos1 == 0 ? parents.p1[len - 1] : parents.p1[pos1 - 1],
+					pos2 == 0 ? parents.p2[len - 1] : parents.p2[pos2 - 1],
+					pos1 == len - 1 ? parents.p1[0] : parents.p1[pos1 + 1],
+					pos2 == len - 1 ? parents.p2[0] : parents.p2[pos2 + 1]
+				};
 
 				foreach (var neighbour in neighbours)
 					connectedCities[i].Add(neighbour);
