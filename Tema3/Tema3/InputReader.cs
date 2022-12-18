@@ -24,9 +24,9 @@ namespace Tema3
 			using (StreamReader file = new System.IO.StreamReader(FilePath))
 			{
 				bool start = false;
-				while ((line = file.ReadLine()) != null)
+				while ((line = file.ReadLine().Trim()) != null)
 				{
-					if (line.Contains("EOF"))
+                    if (line.Contains("EOF"))
 						break;
 
 
