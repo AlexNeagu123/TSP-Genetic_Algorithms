@@ -11,36 +11,31 @@ namespace Tema3
 		public string FilePath { get; private init; }
 		public Dictionary<int, (double x, double y)> Nodes { get; private init; }
 
-	public InputReader(string filePath)
+		public InputReader(string filePath)
 		{
 			FilePath = filePath;
 			Nodes = new();
-		}
 
-		public void ReadInput()
-		{
 			string line;
 
-			using (StreamReader file = new System.IO.StreamReader(FilePath))
+			using StreamReader file = new System.IO.StreamReader(FilePath);
+			bool start = false;
+			while ((line = file.ReadLine().Trim()) != null)
 			{
-				bool start = false;
-				while ((line = file.ReadLine().Trim()) != null)
+				if (line.Contains("EOF"))
+					break;
+
+
+				if (start)
 				{
-                    if (line.Contains("EOF"))
-						break;
-
-
-					if (start)
+					var node = line.Trim().Split(' ');
+					Nodes.Add(int.Parse(node[0]), (double.Parse(node[1]), double.Parse(node[2])));
+				}
+				else
+				{
+					if (line == "NODE_COORD_SECTION")
 					{
-						var node = line.Trim().Split(' ');						
-						Nodes.Add(int.Parse(node[0]), (double.Parse(node[1]), double.Parse(node[2])));
-					}
-					else
-					{
-						if (line == "NODE_COORD_SECTION")
-						{
-							start = true;
-						}
+						start = true;
 					}
 				}
 			}

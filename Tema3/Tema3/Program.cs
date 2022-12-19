@@ -34,7 +34,6 @@ namespace Tema3
 		public static void RunGeneticAlgorithm(int iterations, string file_name, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
 		{
 			var inputReader = new InputReader("InputFiles\\" + file_name);
-			inputReader.ReadInput();
 
 			List<Task> tasks = new List<Task>();
 			int i;

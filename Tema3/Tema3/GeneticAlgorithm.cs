@@ -29,7 +29,7 @@ namespace Tema3
 				++t;
 			}
 
-			double min = eval.Min();
+			long min = eval.Min();
 
 			return (population[eval.ToList().IndexOf(min)] ,min);
 		}
@@ -80,7 +80,7 @@ namespace Tema3
 				++t;
 			}
 
-			double min = eval.Min();
+			long min = eval.Min();
 
 			return (population[eval.ToList().IndexOf(min)], min);
 		}
@@ -99,7 +99,7 @@ namespace Tema3
 			return k2;
 		}
 
-		public static (List<int[]> population, List<double> mutationProb) Select(List<int[]> population, int populationSize, double[] eval, double k1, double k2)
+		public static (List<int[]> population, List<double> mutationProb) Select(List<int[]> population, int populationSize, long[] eval, double k1, double k2)
 		{
 			double[] evalNorm = new double[population.Count];
 			List<int[]> newPopulation = new List<int[]>(populationSize);

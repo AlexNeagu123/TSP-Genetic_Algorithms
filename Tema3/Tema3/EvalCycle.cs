@@ -8,9 +8,9 @@ namespace Tema3
 {
 	public static class EvalCycle
 	{
-        public static double[] EvaluatePopulation(Dictionary<int, (double x, double y)> Nodes, List<int[]> population)
+        public static long[] EvaluatePopulation(Dictionary<int, (double x, double y)> Nodes, List<int[]> population)
 		{
-			var eval = new double[population.Count];
+			var eval = new long[population.Count];
 
 			for (int i = 0; i < population.Count; i++)
 			{
@@ -19,9 +19,9 @@ namespace Tema3
 
 			return eval;
 		}
-		public static double EvaluateCycle(Dictionary<int, (double x, double y)> Nodes, int[] permutation)
+		public static long EvaluateCycle(Dictionary<int, (double x, double y)> Nodes, int[] permutation)
 		{
-			double cost = 0;
+			long cost = 0;
 
 			for (int i = 0; i < permutation.Length - 1; i++)
 			{
@@ -33,9 +33,9 @@ namespace Tema3
 			return cost;
 		}
 
-		public static double ComputeDistance((double x, double y) node1, (double x, double y) node2)
+		public static long ComputeDistance((double x, double y) node1, (double x, double y) node2)
 		{
-			return Math.Sqrt(Math.Pow(node1.x - node2.x, 2) + Math.Pow(node1.y - node2.y, 2));
+			return Convert.ToInt64(Math.Floor(Math.Sqrt(Math.Pow(node1.x - node2.x, 2) + Math.Pow(node1.y - node2.y, 2))));
 		}
 	}
 }

@@ -9,12 +9,12 @@ namespace Tema3
 {
 	public abstract class BaseSelection
 	{
-		public abstract List<int[]> Select(List<int[]> population, int populationSize, double[] eval);
+		public abstract List<int[]> Select(List<int[]> population, int populationSize, long[] eval);
 	}
 
 	public class RouletteSelection : BaseSelection
 	{
-		public override List<int[]> Select(List<int[]> population, int populationSize, double[] eval)
+		public override List<int[]> Select(List<int[]> population, int populationSize, long[] eval)
 		{
 			double[] evalNorm = new double[population.Count];
 			List<int[]> newPopulation = new List<int[]>(populationSize);
@@ -74,7 +74,7 @@ namespace Tema3
 
 	public class TournSelection : BaseSelection
 	{
-		public override List<int[]> Select(List<int[]> population, int populationSize, double[] eval)
+		public override List<int[]> Select(List<int[]> population, int populationSize, long[] eval)
 		{
 			List<int[]> newPopulation = new List<int[]>(populationSize);
 			bool[] taken = new bool[population.Count];
