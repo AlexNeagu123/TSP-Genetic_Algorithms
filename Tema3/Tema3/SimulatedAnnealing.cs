@@ -13,66 +13,73 @@ namespace Tema3
 {
 	public class SimulatedAnnealing
 	{
-		//public static (int[] min_point, double min) Run(Dictionary<int, (double x, double y)> Nodes, int populationSize)
-		//{
-		//	Random random = new Random();
-		//	double T_Stop = 0.0000000001;
-		//	double T = 501.982;
-		//	double T0 = T;
-		//	int k = 0;
+		public static (int[] min_point, double min) Run(Dictionary<int, (double x, double y)> Nodes, int populationSize)
+		{
+
+			Random random = new Random();
+			double T_Stop = 0.0000000001;
+			double T = 501.982;
+			double T0 = T;
+			int k = 0;
 
 
-		//	(int[] individual, double minEval) minTuple;
-		//	var population = GetRandomPopulation(populationSize, Nodes.Count);
+			(int[] individual, double minEval) minTuple;
+			var population = GetRandomPopulation(populationSize, Nodes.Count);
 
-		//	double[] evalPopulation = EvaluatePopulation(Nodes, population);
-		//	minTuple.individual = population[evalPopulation.ToList().IndexOf(evalPopulation.Min())];
-		//	minTuple.minEval = evalPopulation.Min();
+			long[] evalPopulation = EvaluatePopulation(Nodes, population);
+			
+			minTuple.individual = population[evalPopulation.ToList().IndexOf(evalPopulation.Min())];
+			minTuple.minEval = evalPopulation.Min();
+			var curIdentity = IdentityPermutation.Encode(minTuple.individual);
 
-		//	do
-		//	{
-		//		var XX_bits = new bool[X_bits.Length];
-		//		X_bits.CopyTo(XX_bits, 0);
+			int individLen = minTuple.individual.Length;
+			int iterations = 1000;
 
-		//		int iterations = 0;
+			do
+			{
 
-		//		do
-		//		{
-		//			int i = random.Next(X_bits.Length);
+                var newIdentity = new int[individLen];
+				curIdentity.CopyTo(newIdentity, 0);
 
-		//			XX_bits[i] = !XX_bits[i];
+				do
+				{
+                    int index = random.Next(0, newIdentity.Length);
+                    int aux = newIdentity[index];
+					int newVal = random.Next(1, newIdentity.Length - index);
+                    
+					newIdentity[index] = newVal;
 
-		//			var min_point_local = Conversion.FromBitsToDouble(XX_bits, function.SearchDomain, dimensions);
-		//			var min_local = function.EvaluateFunction(min_point_local);
+                    int[] neighbour = IdentityPermutation.Decode(newIdentity);
+					var min_local = EvalCycle.EvaluateCycle(Nodes, neighbour);
 
-		//			if (min_local < minTuple.min)
-		//			{
-		//				minTuple.min = min_local;
-		//				minTuple.min_point = min_point_local;
-		//				X_bits[i] = XX_bits[i];
-		//			}
-		//			else if (random.NextDouble() < Math.Exp(-Math.Abs(min_local - minTuple.min) / T))
-		//			{
-		//				minTuple.min = min_local;
-		//				minTuple.min_point = min_point_local;
-		//				X_bits[i] = XX_bits[i];
-		//			}
-		//			else
-		//			{
-		//				XX_bits[i] = !XX_bits[i];
-		//			}
+					if (min_local < minTuple.minEval)
+					{
+						minTuple.minEval = min_local;
+						minTuple.individual = neighbour;
+						curIdentity[index] = newVal;
+					}
+					else if (random.NextDouble() < Math.Exp(-Math.Abs(min_local - minTuple.minEval) / T))
+					{
+						minTuple.minEval = min_local;
+						minTuple.individual = neighbour;
+						curIdentity[index] = newVal;
+						//Console.WriteLine("Cioza Huinea?");
+					}
+					else
+					{
+						newIdentity[index] = aux;
+					}
+					iterations++;
 
-		//			iterations++;
+				} while (iterations < 1000);
 
+				++k;
+				T = T0 * Math.Pow(0.98, k);
 
-		//		} while (iterations < 10000);
+			} while (T > T_Stop);
 
-		//		++k;
-		//		T = T0 * Math.Pow(0.98, k);
+			return minTuple;
 
-		//	} while (T > T_Stop);
-
-		//	return minTuple;
-		//}
+		}
 	}
 }

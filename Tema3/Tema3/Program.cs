@@ -14,27 +14,81 @@ namespace Tema3
 
 		static double meanTimestamp = 0;
 		static List<long> Timestamps = new List<long>();
-		
+
 		static SQLiteConnection connection = new SQLiteConnection("Data Source=C:\\Genetici\\Tema3.db");
 
 
-		
+
 		static void Main(string[] args)
 		{
 			//BaseSelection selection = new RouletteSelection();
-			BaseCrossover crossover = new PMXCrossover();
+			BaseCrossover crossover = new ERXCrossover();
 			BaseMutation mutation = new IVMutation();
-			
-			RunGeneticAlgorithm(20, "fl417.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
-            RunGeneticAlgorithm(20, "dsj1000.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
 
-            //RunGeneticAlgorithm(10, "pla85900.tsp", 1000, 30, 1, 0.07, 0.3, mutation, crossover);
-            //RunGeneticAlgorithm(10, "usa13509.tsp", 1500, 50, 1, 0.07, 0.4, mutation, crossover);
+			//RunGeneticAlgorithm(20, "fl417.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
+			//RunGeneticAlgorithm(20, "dsj1000.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
+			RunHillClimber(20, 1000, "st70.tsp", 200);
+			//RunGeneticAlgorithm(10, "pla85900.tsp", 1000, 30, 1, 0.07, 0.3, mutation, crossover);
+			//RunGeneticAlgorithm(10, "usa13509.tsp", 1500, 50, 1, 0.07, 0.4, mutation, crossover);
 
+		}
+
+		public static void RunHillClimber(int iterations, int hillIterations, string fileName, int popSize)
+		{
+			var inputReader = new InputReader("InputFiles\\" + fileName);
+			List<Task> tasks = new List<Task>();
+			int i;
+
+			meanValue = 0;
+			values = new List<double>();
+
+			meanTimestamp = 0;
+			Timestamps = new List<long>();
+
+            for (i = 0; i < iterations; ++i)
+            {
+                tasks.Add(Task.Factory.StartNew(() => calcHill(inputReader.Nodes, popSize)));
+                if ((i + 1) % 5 == 0)
+                {
+                    Task.WaitAll(tasks.ToArray());
+                    tasks.Clear();
+                }
+            }
+
+            Task.WaitAll(tasks.ToArray());
+            meanValue /= i;
+            
+			double SDValues = 0;
+            for (int j = 0; j < i; ++j)
+            {
+                SDValues += Math.Pow(values[j] - meanValue, 2);
+            }
+
+            SDValues = Math.Sqrt(SDValues / i);
+
+            meanTimestamp /= i;
+			Console.WriteLine(meanValue);
         }
 
+		public static void calcHill(Dictionary<int, (double x, double y)> Nodes, int popSize)
+		{
+            var TimestampStart = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+            (_, double dd) = SimulatedAnnealing.Run(Nodes, popSize);
+            
+			Console.WriteLine("Value: " + dd);
+            var TimestampFinish = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 
-		public static void RunGeneticAlgorithm(int iterations, string file_name, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
+            lock (sumlock)
+            {
+                Timestamps.Add(TimestampFinish - TimestampStart);
+                meanTimestamp += TimestampFinish - TimestampStart;
+
+                meanValue += dd;
+                values.Add(dd);
+            }
+        }
+
+        public static void RunGeneticAlgorithm(int iterations, string file_name, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
 		{
 			var inputReader = new InputReader("InputFiles\\" + file_name);
 
