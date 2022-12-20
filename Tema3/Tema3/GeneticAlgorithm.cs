@@ -62,7 +62,7 @@ namespace Tema3
 
 	public static class GeneticAlgorithmAdaptive
 	{
-		public static (int[] individ, double value) RunAdaptive(Dictionary<int, (double x, double y)> Nodes, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
+		public static (int[] individ, long value) RunAdaptive(Dictionary<int, (double x, double y)> Nodes, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
 		{
 			int t = 0;
 
@@ -70,6 +70,13 @@ namespace Tema3
 			var population = GeneticAlgorithm.GetRandomPopulation(populationSize, Nodes.Count);
 
 			var eval = EvalCycle.EvaluatePopulation(Nodes, population);
+
+			//for (int i = 0; i < population[0].length; i++)
+			//{
+			//	console.write(population[0][i] + " ");
+			//}
+			//console.writeline();
+			//console.writeline(eval[0]);
 
 			while (t < maxT)
 			{
@@ -95,7 +102,7 @@ namespace Tema3
 		public static double CalculateMutationProb(double max, double average, double eval, double k1, double k2)
 		{
 			if (eval >= average)
-				return Math.Max(k1 * (max - eval) / (max - average), 0.0008);
+				return Math.Min(k2 - 0.1, Math.Max(k1 * (max - eval) / (max - average), 0.008));
 			return k2;
 		}
 

@@ -20,7 +20,7 @@ namespace Tema3
 			(int[] individual, double minEval) minTuple;
 			var population = GetRandomPopulation(populationSize, Nodes.Count);
 
-			double[] evalPopulation = EvaluatePopulation(Nodes, population);
+			long[] evalPopulation = EvaluatePopulation(Nodes, population);
 			minTuple.individual = population[evalPopulation.ToList().IndexOf(evalPopulation.Min())];
 			minTuple.minEval = evalPopulation.Min();
 

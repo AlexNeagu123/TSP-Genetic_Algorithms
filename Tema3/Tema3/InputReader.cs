@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace Tema3
 {
@@ -19,26 +21,32 @@ namespace Tema3
 			string line;
 
 			using StreamReader file = new System.IO.StreamReader(FilePath);
-			bool start = false;
+			
 			while ((line = file.ReadLine().Trim()) != null)
 			{
 				if (line.Contains("EOF"))
 					break;
 
+				line = line.Trim();
+				line = Regex.Replace(line, @"\s+", " ");
 
-				if (start)
-				{
-					var node = line.Trim().Split(' ');
-					Nodes.Add(int.Parse(node[0]), (double.Parse(node[1]), double.Parse(node[2])));
-				}
-				else
-				{
-					if (line == "NODE_COORD_SECTION")
-					{
-						start = true;
-					}
-				}
+				var node = line.Split(' ');
+				
+				if (node.Length < 3)
+					continue;
+
+				NumberFormatInfo nfi = new NumberFormatInfo();
+                nfi.NumberDecimalSeparator = ".";
+
+				//Console.WriteLine((int.Parse(node[0]) + " " + (Double.Parse(node[1], NumberStyles.Any, nfi) + " " +
+				//	Double.Parse(node[2], NumberStyles.Any, nfi))));
+
+				Nodes.Add(int.Parse(node[0]), (Double.Parse(node[1], NumberStyles.Any, nfi), 
+					Double.Parse(node[2], NumberStyles.Any, nfi)));
+			
 			}
+
+			file.Close();
 		}
 	}
 }

@@ -22,13 +22,16 @@ namespace Tema3
 		static void Main(string[] args)
 		{
 			//BaseSelection selection = new RouletteSelection();
-			BaseCrossover crossover = new NormalCrossover();
+			BaseCrossover crossover = new PMXCrossover();
 			BaseMutation mutation = new IVMutation();
-			RunGeneticAlgorithm(10, "pla33810.tsp", 1000, 30, 1, 0.07, 0.3, mutation, crossover);
-			RunGeneticAlgorithm(10, "pla85900.tsp", 1000, 30, 1, 0.07, 0.3, mutation, crossover);
-			RunGeneticAlgorithm(10, "usa13509.tsp", 1500, 50, 1, 0.07, 0.4, mutation, crossover);
+			
+			RunGeneticAlgorithm(20, "fl417.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
+            RunGeneticAlgorithm(20, "dsj1000.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
 
-		}
+            //RunGeneticAlgorithm(10, "pla85900.tsp", 1000, 30, 1, 0.07, 0.3, mutation, crossover);
+            //RunGeneticAlgorithm(10, "usa13509.tsp", 1500, 50, 1, 0.07, 0.4, mutation, crossover);
+
+        }
 
 
 		public static void RunGeneticAlgorithm(int iterations, string file_name, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
@@ -88,7 +91,7 @@ namespace Tema3
 		{
 			var TimestampStart = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
 
-			(_, double dd) = GeneticAlgorithmAdaptive.RunAdaptive(Nodes, maxT, populationSize, crossoverProbability, k1, k2, mutation, crossover);
+			(_, long dd) = GeneticAlgorithmAdaptive.RunAdaptive(Nodes, maxT, populationSize, crossoverProbability, k1, k2, mutation, crossover);
 
 			//double dd = GeneticAlgorithm.GetMin(s_function, dimensions, digitsOfprecision, 2000, 200, mutateProbability, crossoverProbability);
 

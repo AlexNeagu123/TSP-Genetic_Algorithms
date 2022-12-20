@@ -48,18 +48,34 @@ namespace Tema3
 				return individual;
 
 			int len = individual.Length;
-			int[] permutation = new int[len];
+			int[] rem = new int[len];
 
 			int invLen = random.Next(2, len + 1);
 			int pos = random.Next(0, len - invLen + 1);
+			int newLen = 0;
 
 			for (int i = 0; i < len; i++)
 			{
 				if (i < pos || i > pos + invLen - 1)
-					permutation[i] = individual[i];
-				else
-					permutation[i] = individual[pos + invLen - 1 - (i - pos)];
+					rem[newLen++] = individual[i];
 			}
+
+			int insertPos = random.Next(Math.Max(0, pos - 1), Math.Min(pos + 2, newLen + 1));
+            int finalLength = 0;
+
+			int[] permutation = new int[len];
+			
+			for(int i = 0; i <= newLen; i++)
+			{
+				if(i == insertPos)
+				{
+					for(int j = 0; j < invLen; j++)
+						permutation[finalLength++] = individual[pos + invLen - 1 - j];
+				} 
+				if(i != newLen)
+					permutation[finalLength++] = rem[i];	
+			}
+
 			return permutation;
 		}
 
