@@ -27,13 +27,13 @@ namespace Tema3
 
 			//RunGeneticAlgorithm(20, "fl417.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
 			//RunGeneticAlgorithm(20, "dsj1000.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
-			RunHillClimber(20, 1000, "st70.tsp", 200);
+			RunHillClimber(20, "st70.tsp", 200);
 			//RunGeneticAlgorithm(10, "pla85900.tsp", 1000, 30, 1, 0.07, 0.3, mutation, crossover);
 			//RunGeneticAlgorithm(10, "usa13509.tsp", 1500, 50, 1, 0.07, 0.4, mutation, crossover);
 
 		}
 
-		public static void RunHillClimber(int iterations, int hillIterations, string fileName, int popSize)
+		public static void RunHillClimber(int iterations, string fileName, int popSize)
 		{
 			var inputReader = new InputReader("InputFiles\\" + fileName);
 			List<Task> tasks = new List<Task>();
@@ -88,9 +88,9 @@ namespace Tema3
             }
         }
 
-        public static void RunGeneticAlgorithm(int iterations, string file_name, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
+        public static void RunGeneticAlgorithm(int iterations, string fileName, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
 		{
-			var inputReader = new InputReader("InputFiles\\" + file_name);
+			var inputReader = new InputReader("InputFiles\\" + fileName);
 
 			List<Task> tasks = new List<Task>();
 			int i;
@@ -126,7 +126,7 @@ namespace Tema3
 			meanTimestamp /= i;
 
 			Record best = new Record() {
-				FileName = file_name,
+				FileName = fileName,
 				AvgValue = meanValue,
 				SdValue = SDValues,
 				BestValue = values.Min(),
@@ -163,6 +163,94 @@ namespace Tema3
 			}
 		}
 
+		public static void RunSimulatedAnnealing(int iterations, string fileName, int popSize)
+		{
+			var inputReader = new InputReader("InputFiles\\" + fileName);
+			List<Task> tasks = new List<Task>();
+			int i;
+
+			meanValue = 0;
+			values = new List<double>();
+
+			meanTimestamp = 0;
+			Timestamps = new List<long>();
+
+			for (i = 0; i < iterations; ++i)
+			{
+				tasks.Add(Task.Factory.StartNew(() => calcAnnealing(inputReader.Nodes, popSize)));
+				if ((i + 1) % 5 == 0)
+				{
+					Task.WaitAll(tasks.ToArray());
+					tasks.Clear();
+				}
+			}
+
+			Task.WaitAll(tasks.ToArray());
+			meanValue /= i;
+
+			double SDValues = 0;
+			for (int j = 0; j < i; ++j)
+			{
+				SDValues += Math.Pow(values[j] - meanValue, 2);
+			}
+
+			SDValues = Math.Sqrt(SDValues / i);
+
+			meanTimestamp /= i;
+			Console.WriteLine(meanValue);
+
+
+			Record best = new Record()
+			{
+				FileName = fileName,
+				AvgValue = meanValue,
+				SdValue = SDValues,
+				BestValue = values.Min(),
+				AvgTime = meanTimestamp,
+			};
+
+			WriteToDB(best, "RecordsAnnealing");
+		}
+
+		static void calcAnnealing(Dictionary<int, (double x, double y)> Nodes, int populationSize)
+		{
+			var TimestampStart = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+			(_, double dd) = SimulatedAnnealing.Run(Nodes, populationSize);
+			Console.WriteLine("Value: " + dd);
+
+			var TimestampFinish = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+			lock (sumlock)
+			{
+				Timestamps.Add(TimestampFinish - TimestampStart);
+				meanTimestamp += TimestampFinish - TimestampStart;
+
+				meanValue += dd;
+				values.Add(dd);
+			}
+		}
+
+		private static void WriteToDBAnnealing(Record record, string table)
+		{
+			string insertSql = $"INSERT INTO {table} (file_name, avg_value, sd_value, best_value, avg_time) VALUES (@fileName, @avgValue, @sdValue, @bestValue, @avgTime)";
+
+			using (connection)
+			{
+				using (SQLiteCommand command = new SQLiteCommand(insertSql, connection))
+				{
+					command.Parameters.AddWithValue("@fileName", record.FileName);
+					command.Parameters.AddWithValue("@avgValue", record.AvgValue);
+					command.Parameters.AddWithValue("@sdValue", record.SdValue);
+					command.Parameters.AddWithValue("@bestValue", record.BestValue);
+					command.Parameters.AddWithValue("@avgTime", record.AvgTime);
+
+					connection.Open();
+					command.ExecuteNonQuery();
+					connection.Close();
+				}
+			}
+		}
 
 		private static void WriteToDB(Record record, string table)
 		{

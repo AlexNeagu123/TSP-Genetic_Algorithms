@@ -19,7 +19,6 @@ namespace Tema3
 			Random random = new Random();
 			double T_Stop = 0.0000000001;
 			double T = 501.982;
-			double T0 = T;
 			int k = 0;
 
 
@@ -30,15 +29,14 @@ namespace Tema3
 			
 			minTuple.individual = population[evalPopulation.ToList().IndexOf(evalPopulation.Min())];
 			minTuple.minEval = evalPopulation.Min();
-			var curIdentity = IdentityPermutation.Encode(minTuple.individual);
+			var curIdentity = Encode(minTuple.individual);
 
 			int individLen = minTuple.individual.Length;
-			int iterations = 1000;
 
 			do
 			{
-
-                var newIdentity = new int[individLen];
+				int iterations = 0;
+				var newIdentity = new int[individLen];
 				curIdentity.CopyTo(newIdentity, 0);
 
 				do
@@ -49,8 +47,8 @@ namespace Tema3
                     
 					newIdentity[index] = newVal;
 
-                    int[] neighbour = IdentityPermutation.Decode(newIdentity);
-					var min_local = EvalCycle.EvaluateCycle(Nodes, neighbour);
+                    int[] neighbour = Decode(newIdentity);
+					var min_local = EvaluateCycle(Nodes, neighbour);
 
 					if (min_local < minTuple.minEval)
 					{
@@ -63,7 +61,6 @@ namespace Tema3
 						minTuple.minEval = min_local;
 						minTuple.individual = neighbour;
 						curIdentity[index] = newVal;
-						//Console.WriteLine("Cioza Huinea?");
 					}
 					else
 					{
@@ -74,7 +71,7 @@ namespace Tema3
 				} while (iterations < 1000);
 
 				++k;
-				T = T0 * Math.Pow(0.98, k);
+				T *= 0.98;
 
 			} while (T > T_Stop);
 
