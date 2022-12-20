@@ -29,9 +29,9 @@ namespace Tema3
 			//RunGeneticAlgorithm(20, "dsj1000.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
 			//RunHillClimber(20, "st70.tsp", 200);
 
-			RunSimulatedAnnealing(1, "st70.tsp", 200);
+			//RunSimulatedAnnealing(1, "usa13509.tsp", 200);
 			//RunGeneticAlgorithm(10, "pla85900.tsp", 1000, 30, 1, 0.07, 0.3, mutation, crossover);
-			//RunGeneticAlgorithm(10, "usa13509.tsp", 1500, 50, 1, 0.07, 0.4, mutation, crossover);
+			RunGeneticAlgorithm(10, "usa13509.tsp", 100, 50, 1, 0.07, 0.4, mutation, crossover);
 
 		}
 

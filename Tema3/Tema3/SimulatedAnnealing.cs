@@ -17,7 +17,7 @@ namespace Tema3
 		{
 
 			Random random = new Random();
-			double T_Stop = 0.0000000001;
+			double T_Stop = 0.0001;
 			double T = 501.982;
 			int k = 0;
 
@@ -35,6 +35,7 @@ namespace Tema3
 
 			do
 			{
+				Console.WriteLine(T);
 				int iterations = 0;
 				var newIdentity = new int[individLen];
 				curIdentity.CopyTo(newIdentity, 0);
@@ -68,7 +69,7 @@ namespace Tema3
 					}
 					iterations++;
 
-				} while (iterations < 1000);
+				} while (iterations < 100);
 
 				++k;
 				T *= 0.98;
