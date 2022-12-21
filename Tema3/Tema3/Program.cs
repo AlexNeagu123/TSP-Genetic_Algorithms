@@ -85,7 +85,7 @@ namespace Tema3
 		public static void calcHillAfterAG(Dictionary<int, (double x, double y)> Nodes, (int iteartions, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover) Genetic)
 		{
 			var TimestampStart = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-			(_, double dd) = HillClimbing.RunHillAfterAG(Nodes, 1000, Genetic);
+			(_, double dd) = HillClimbing.RunHillAfterAG(Nodes, Genetic);
 
 			Console.WriteLine("Value: " + dd);
 			var TimestampFinish = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
