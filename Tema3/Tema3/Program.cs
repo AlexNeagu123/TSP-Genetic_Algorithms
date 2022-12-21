@@ -25,7 +25,7 @@ namespace Tema3
 			BaseCrossover crossover = new PMXCrossover();
 			BaseMutation mutation = new IVMutation();
 
-			RunGeneticAlgorithmAfterHill(20, "st70.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
+			RunGeneticAlgorithmAfterHill(20, "eil51.tsp", 2000, 200, 1, 0.3, 0.7, mutation, crossover);
 		}
 
 		public static void RunGeneticAlgorithmAfterHill(int iterations, string fileName, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
@@ -82,10 +82,10 @@ namespace Tema3
 		}
 
 
-		public static void calcHillAfterAG(Dictionary<int, (double x, double y)> Nodes, (int iteartions, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover) Genetic)
+		public static void calcHillAfterAG(Dictionary<int, (double x, double y)> Nodes, (int iterations, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover) Genetic)
 		{
 			var TimestampStart = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-			(_, double dd) = HillClimbing.RunHillAfterAG(Nodes, Genetic);
+			(_, double dd) = HillClimbing.RunHillAfterAG(Nodes, 1000, Genetic);
 
 			Console.WriteLine("Value: " + dd);
 			var TimestampFinish = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();

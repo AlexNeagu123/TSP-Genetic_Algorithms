@@ -60,7 +60,7 @@ namespace Tema3
 					rem[newLen++] = individual[i];
 			}
 
-			int insertPos = random.Next(0, newLen + 1);
+			int insertPos = pos; //random.Next(0, newLen + 1);
             int finalLength = 0;
 
 			int[] permutation = new int[len];

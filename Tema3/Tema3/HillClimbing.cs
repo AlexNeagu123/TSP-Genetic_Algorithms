@@ -55,33 +55,27 @@ namespace Tema3
 		}
 
 
-		public static (int[] individ, double value) RunHillAfterAG(Dictionary<int, (double x, double y)> Nodes, (int iterations, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover) Genetic)
+		public static (int[] individ, double value) RunHillAfterAG(Dictionary<int, (double x, double y)> Nodes, int iterations, (int iterations, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover) Genetic)
 		{
 
 			(int[] individual, double minEval) minTuple = RunAdaptive(Nodes, Genetic.maxT, Genetic.populationSize, Genetic.crossoverProbability, Genetic.k1, Genetic.k2, Genetic.mutation, Genetic.crossover);
 
-
 			bool local = false;
-			(int[] individual, double minEval) minTuple_loc = minTuple;
 
 			do
 			{
+
 				(int[] individual, double minEval) minNeighbor;
-				minNeighbor.individual = FirstImprovement(Nodes, minTuple_loc.individual);
+				minNeighbor.individual = FirstImprovement(Nodes, minTuple.individual);
 				minNeighbor.minEval = EvaluateCycle(Nodes, minNeighbor.individual);
 
 
-				if (minTuple_loc.minEval > minNeighbor.minEval)
-					minTuple_loc = minNeighbor;
+				if (minTuple.minEval > minNeighbor.minEval)
+					minTuple = minNeighbor;
 				else
 					local = true;
 
 			} while (!local);
-
-
-			if (minTuple.minEval > minTuple_loc.minEval)
-				minTuple = minTuple_loc;
-
 
 			return minTuple;
 
