@@ -22,7 +22,7 @@ namespace Tema3
 		static void Main(string[] args)
 		{
 			//BaseSelection selection = new RouletteSelection();
-			BaseCrossover crossover = new ERXCrossover();
+			BaseCrossover crossover = new PMXCrossover();
 			BaseMutation mutation = new IVMutation();
 
 			RunGeneticAlgorithmAfterHill(20, "st70.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
