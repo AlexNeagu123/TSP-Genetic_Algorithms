@@ -25,13 +25,18 @@ namespace Tema3
 			BaseCrossover crossover = new PMXCrossover();
 			BaseMutation mutation = new IVMutation();
 
-			RunGeneticAlgorithmAfterHill(20, "eil51.tsp", 2000, 200, 1, 0.3, 0.7, mutation, crossover);
+			foreach (var fileName in new string[] { "usa13509.tsp" })
+				foreach (var cross in new BaseCrossover[]{ new PMXCrossover() })
+					foreach (var k1 in new double[]{ 0.1, 0.4, 0.8, 1.3})
+					{
+						RunGeneticAlgorithmAfterHill(20, fileName, 1000, 100, 1, k1, 0.6, mutation, cross);
+					}
 		}
 
 		public static void RunGeneticAlgorithmAfterHill(int iterations, string fileName, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
 		{
 			var inputReader = new InputReader("InputFiles\\" + fileName);
-
+			Console.WriteLine(fileName + ": " + k1 + "  Crossover: " + crossover.GetType().Name);
 			List<Task> tasks = new List<Task>();
 			int i;
 
@@ -77,6 +82,8 @@ namespace Tema3
 				MutType = mutation.GetType().Name,
 				CrossType = crossover.GetType().Name
 			};
+
+			Console.WriteLine("Best: " + best.BestValue + " Avg: " + best.AvgValue);
 
 			WriteToDB(best, "Records");
 		}

@@ -35,7 +35,7 @@ namespace Tema3
 
 		public static long ComputeDistance((double x, double y) node1, (double x, double y) node2)
 		{
-			return Convert.ToInt64(Math.Floor(Math.Sqrt(Math.Pow(node1.x - node2.x, 2) + Math.Pow(node1.y - node2.y, 2))));
+			return Convert.ToInt64(Math.Floor(Math.Sqrt(Math.Pow(node1.x - node2.x, 2) + Math.Pow(node1.y - node2.y, 2)) + 0.5));
 		}
 	}
 }
