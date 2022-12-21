@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using static Tema3.IdentityPermutation;
 using static Tema3.GeneticAlgorithm;
 using static Tema3.EvalCycle;
+using static Tema3.GeneticAlgorithmAdaptive;
 using Microsoft.VisualBasic;
 
 namespace Tema3
 {
 	//TO DO
-	public class HillClimbing
+	public static class HillClimbing
 	{
 		public static (int[] individ, double value) Run(Dictionary<int, (double x, double y)> Nodes, int populationSize, int iterations)
 		{
@@ -24,6 +25,40 @@ namespace Tema3
 			minTuple.individual = population[evalPopulation.ToList().IndexOf(evalPopulation.Min())];
 			minTuple.minEval = evalPopulation.Min();
 
+
+			for (var t = 0; t < iterations; t++)
+			{
+				bool local = false;
+				(int[] individual, double minEval) minTuple_loc = minTuple;
+
+				do
+				{
+					(int[] individual, double minEval) minNeighbor;
+					minNeighbor.individual = FirstImprovement(Nodes, minTuple_loc.individual);
+					minNeighbor.minEval = EvaluateCycle(Nodes, minNeighbor.individual);
+
+
+					if (minTuple_loc.minEval > minNeighbor.minEval)
+						minTuple_loc = minNeighbor;
+					else
+						local = true;
+
+				} while (!local);
+
+
+				if (minTuple.minEval > minTuple_loc.minEval)
+					minTuple = minTuple_loc;
+			}
+
+			return minTuple;
+
+		}
+
+
+		public static (int[] individ, double value) RunHillAfterAG(Dictionary<int, (double x, double y)> Nodes, int iterations, (int iterations, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover) Genetic)
+		{
+
+			(int[] individual, double minEval) minTuple = RunAdaptive(Nodes, Genetic.maxT, Genetic.populationSize, Genetic.crossoverProbability, Genetic.k1, Genetic.k2, Genetic.mutation, Genetic.crossover);
 
 			for (var t = 0; t < iterations; t++)
 			{

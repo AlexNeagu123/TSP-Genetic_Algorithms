@@ -6,7 +6,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Tema3
 {
-	class Program
+	public static class Program
 	{
 		static double meanValue = 0;
 		static List<double> values = new List<double>();
@@ -25,15 +25,81 @@ namespace Tema3
 			BaseCrossover crossover = new ERXCrossover();
 			BaseMutation mutation = new IVMutation();
 
-			//RunGeneticAlgorithm(20, "fl417.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
-			//RunGeneticAlgorithm(20, "dsj1000.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
-			//RunHillClimber(20, "st70.tsp", 200);
-
-			//RunSimulatedAnnealing(1, "usa13509.tsp", 200);
-			//RunGeneticAlgorithm(10, "pla85900.tsp", 1000, 30, 1, 0.07, 0.3, mutation, crossover);
-			RunGeneticAlgorithm(10, "usa13509.tsp", 100, 50, 1, 0.07, 0.4, mutation, crossover);
-
+			RunGeneticAlgorithmAfterHill(20, "st70.tsp", 2000, 200, 1, 1.3, 0.7, mutation, crossover);
 		}
+
+		public static void RunGeneticAlgorithmAfterHill(int iterations, string fileName, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover)
+		{
+			var inputReader = new InputReader("InputFiles\\" + fileName);
+
+			List<Task> tasks = new List<Task>();
+			int i;
+
+			meanValue = 0;
+			values = new List<double>();
+
+			meanTimestamp = 0;
+			Timestamps = new List<long>();
+
+			for (i = 0; i < iterations; ++i)
+			{
+				tasks.Add(Task.Factory.StartNew(() => calcHillAfterAG(inputReader.Nodes, (iterations, maxT, populationSize, crossoverProbability, k1, k2, mutation, crossover))));
+				if ((i + 1) % 5 == 0)
+				{
+					Task.WaitAll(tasks.ToArray());
+					tasks.Clear();
+				}
+			}
+
+			Task.WaitAll(tasks.ToArray());
+
+			meanValue /= i;
+			double SDValues = 0;
+			for (int j = 0; j < i; ++j)
+			{
+				SDValues += Math.Pow(values[j] - meanValue, 2);
+			}
+
+			SDValues = Math.Sqrt(SDValues / i);
+
+
+			meanTimestamp /= i;
+
+			Record best = new Record()
+			{
+				FileName = fileName,
+				AvgValue = meanValue,
+				SdValue = SDValues,
+				BestValue = values.Min(),
+				AvgTime = meanTimestamp,
+				K1Prob = k1,
+				CrossProb = crossoverProbability,
+				MutType = mutation.GetType().Name,
+				CrossType = crossover.GetType().Name
+			};
+
+			WriteToDB(best, "Records");
+		}
+
+
+		public static void calcHillAfterAG(Dictionary<int, (double x, double y)> Nodes, (int iteartions, int maxT, int populationSize, double crossoverProbability, double k1, double k2, BaseMutation mutation, BaseCrossover crossover) Genetic)
+		{
+			var TimestampStart = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+			(_, double dd) = HillClimbing.RunHillAfterAG(Nodes, 1000, Genetic);
+
+			Console.WriteLine("Value: " + dd);
+			var TimestampFinish = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+			lock (sumlock)
+			{
+				Timestamps.Add(TimestampFinish - TimestampStart);
+				meanTimestamp += TimestampFinish - TimestampStart;
+
+				meanValue += dd;
+				values.Add(dd);
+			}
+		}
+
 
 		public static void RunHillClimber(int iterations, string fileName, int popSize)
 		{
@@ -258,7 +324,7 @@ namespace Tema3
 		{
 			string insertSql = $"INSERT INTO {table} (file_name, avg_value, sd_value, best_value, avg_time, k1_prob, cross_prob, mutation_type, crossover_type) VALUES (@fileName, @avgValue, @sdValue, @bestValue, @avgTime, @k1Prob, @crossProb, @mutationType, @crossoverType)";
 
-			using (connection)
+			//using (connection)
 			{
 				using (SQLiteCommand command = new SQLiteCommand(insertSql, connection))
 				{
