@@ -22,6 +22,10 @@ namespace Tema3
 		static void Main(string[] args)
 		{
 			//BaseSelection selection = new RouletteSelection();
+
+
+
+			
 			BaseCrossover crossover = new PMXCrossover();
 			BaseMutation mutation = new IVMutation();
 
