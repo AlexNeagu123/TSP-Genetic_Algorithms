@@ -1,4 +1,4 @@
-# Tema3-AlgoritmiGenetici
+# TSP-Genetic_Algorithms
 
 The main goal of this experiment is to solve the **Symmetric Travelling Salesman Problem** using a non-deterministic approach.
 
